@@ -1,80 +1,35 @@
 import time
-import os
-import pandas as pd
+import datetime
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 driver = webdriver.Chrome()
-driver.get('https://belavia.by/account/#/account')
-
+driver.get('https://belavia.by/booking/#/results/11356009897')
 time.sleep(5)
 
-acc_login = driver.find_element(By.XPATH, '//*[@id="mui-3"]')
-acc_login.clear()
-acc_login.send_keys('Почта')
-time.sleep(5)
+wait = WebDriverWait(driver, 10)
 
-button = driver.find_element(By.CSS_SELECTOR, '#root > div.loginWrapper-3gPwb > div > form > div > div.button_wrapper-2wxuz.button_wrapper-3pJMZ > button')
-button.click()
-time.sleep(50)
+cookie_button = wait.until(
+        EC.element_to_be_clickable((By.ID, "submit_personal"))
+        )
+cookie_button.click()
+time.sleep(15)
 
-# driver_mail = webdriver.Chrome()
-# driver_mail.get('https://app.tuta.com/login')
-# time.sleep(5)
+current_date = datetime.date(2026, 10, 28)
+end_date = datetime.date(2027, 1, 1)
+total_days = (end_date - current_date).days
 
-# acc_mail_login = driver_mail.find_element(By.CSS_SELECTOR, 'input[type="email"]')
-# acc_mail_login.clear()
-# acc_mail_login.send_keys('login')
-# time.sleep(2)
-
-# acc_mail_password = driver_mail.find_element(By.CSS_SELECTOR, 'input[type="password"]')
-# acc_mail_password.clear()
-# acc_mail_password.send_keys('password')
-# time.sleep(2)
-
-# button_mail = driver_mail.find_element(By.XPATH, '//*[@id="login-view"]/div[2]/div/div[1]/div[1]/form/div[4]/button')
-# button_mail.click()
-# time.sleep(5)
-
-# first_message = driver_mail.find_element(By.CSS_SELECTOR, '#mail > div > div.flex.col.flex-grow > div > div:nth-child(1) > div.list-column.flex.col.fill-absolute > div.flex-grow.rel > div > div > div > div.rel.flex-grow > div > ul > li:nth-child(14)')
-# first_message.click()
-# time.sleep(2)
-
-# our_code = (driver_mail.find_element(By.XPATH, '//*[@id="shadow-mail-body"]/table/tbody/tr/td/table/tbody/tr[4]/td/table/tbody/tr[1]/td/table/tbody/tr[6]/td/table/tbody/tr/td[2]/table/tbody/tr[2]/td/p')).text
-# driver_mail.close()
-
-# acc_accept = driver.find_element(By.XPATH, '//*[@id="mui-6"]')
-# acc_accept.clear()
-# acc_accept.send_keys(our_code)
-# time.sleep(2)
-
-# button = driver.find_element(By.CSS_SELECTOR, '//*[@id="root"]/div[2]/div/form/div/div[2]/button')
-# button.click()
-# time.sleep(5)
-
-button_find_road = driver.find_element(By.XPATH, "//button[contains(text(), 'Искать рейсы')]")
-button_find_road.click()
-time.sleep(8)
-
-our_place_shipments_input = driver.find_element(By.XPATH, "//input[@placeholder='Откуда']")
-our_place_shipments_input.click()
-time.sleep(2)
-
-our_place_shipments = driver.find_element(By.CSS_SELECTOR, 'input[data-city="Минск"]')
-our_place_shipments.click()
-time.sleep(2)
-
-our_place_arrival_input = driver.find_element(By.XPATH, "//input[@placeholder='Куда']")
-our_place_arrival_input.click()
-time.sleep(1000)
-
-our_place_arrival = driver.find_element(By.CSS_SELECTOR, 'input[data-city="Пекин"]')
-
-
+for step in range(total_days):
+        next_day_button = wait.until(
+                EC.presence_of_element_located((By.XPATH, "//div[@data-week-calendar-day-index='4']"
+                )))
+        
+        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_day_button)
+        
+        actions = ActionChains(driver)
+        actions.move_to_element(next_day_button).click().perform()
+        
 driver.quit()
-
-
-
-#66 дней

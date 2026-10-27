@@ -47,7 +47,7 @@ class Parser_Belavia:
             'Дата вылета': ticket[0],
             'Компания': ticket[1] + ' + ' + ticket[11],
             'Время вылета': ticket[2],
-            'Время полета': ticket[3] + ' + ' + ticket[12],
+            'Время полета': ticket[3] + ' + ' + ticket[13],
             'Время прилета': ticket[14],
             'Город вылета': ticket[5],
             'Город прилета': ticket[17],

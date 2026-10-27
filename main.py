@@ -3,6 +3,13 @@ import time
 import datetime
 import csv
 import os
+import pandas as pd
+from selenium.webdriver.chrome.options import Options
+
+def log(func):
+    log_data = {"Function": [func], "Time": [datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")], "User": [os.environ.get('USERNAME')]}
+    df = pd.DataFrame(log_data)
+    df.to_csv('logging.csv', index=False, mode="a", sep=";", header=not os.path.isfile('logging.csv'), encoding="utf-8-sig")
 
 def main():
     parser = Parser_Belavia('https://belavia.by/booking/#/results/11357256459')
@@ -21,25 +28,30 @@ def main():
                 if len(ticket) < 20:
                      row_info = parser.one_road(ticket)
                      target_file = belavia_one_road
+                     func_name_one_road = 'one_road_ticket'
                 else:
                      row_info = parser.two_roads(ticket)
                      target_file = belavia_two_road
+                     func_name_one_road = 'two_road_ticket'
 
                 file_exists = os.path.exists(target_file)
-                with open(target_file, mode='a', newline='', encoding='utf-8-sig') as f:
-                    writer = csv.DictWriter(f, fieldnames=row_info.keys(), delimiter=';')
+                with open(target_file, mode='a', newline='', encoding='utf-8-sig') as file:
+                    writer = csv.DictWriter(file, fieldnames=row_info.keys(), delimiter=',')
                     
                     if not file_exists:
                         writer.writeheader() 
                         
                     writer.writerow(row_info)
+
+                log(func_name_one_road)
                      
             time.sleep(1)
             parser.click_next_day()
             time.sleep(3)
 
     except Exception as e:
-        print(e)
+        print(f'Вы получили ошибку:{e}')
+
     finally:
         print('Благодарю за использование. Работа закончена!')
 
